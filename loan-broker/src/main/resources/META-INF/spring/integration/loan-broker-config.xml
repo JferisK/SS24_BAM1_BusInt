@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/integration"
+    xmlns:beans="http://www.springframework.org/schema/beans"
+    xmlns:jms="http://www.springframework.org/schema/integration/jms"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/integration https://www.springframework.org/schema/integration/spring-integration.xsd
+        http://www.springframework.org/schema/integration/jms https://www.springframework.org/schema/integration/jms/spring-integration-jms.xsd">
+
+    <!-- Definition des CreditBureauService -->
+    <beans:bean id="creditBureauService" class="de.jakob_kroemer.service.CreditBureauService"/>
+
+    <!-- Konfiguration des LoanBrokerGateway -->
+    <gateway id="loanBrokerGateway"
+            default-request-channel="loanRequestsChannel"
+            service-interface="de.jakob_kroemer.gateway.LoanBrokerGateway">
+        <method name="getBestLoanQuote" request-channel="loanRequestsChannel"/>
+    </gateway>
+
+    <!-- Nachrichtenverarbeitungskette für eingehende Kreditanfragen -->
+    <chain input-channel="loanRequestsChannel">
+        <!-- Bereicherung der Header mit dem Credit Score -->
+        <header-enricher>
+            <header name="creditScore" expression="@creditBureauService.getCreditScore(payload.ssn)"/>
+        </header-enricher>
+        <!-- Routing der Nachrichten basierend auf dem Credit Score zu verschiedenen Banken -->
+        <recipient-list-router>
+            <recipient channel="loanRequestsChannel"/>
+            <recipient selector-expression="headers['creditScore'] > 750" channel="premiereBankChannel"/>
+            <recipient selector-expression="headers['creditScore'] > 700" channel="qualityBankChannel"/>
+            <recipient selector-expression="headers['creditScore'] > 650" channel="friendlyBankChannel"/>
+            <recipient channel="easyBankChannel"/>
+        </recipient-list-router>
+    </chain>
+
+    <!-- Definition der Ausgangskanäle für jede Bank -->
+    <int:channel id="exclusiveBankChannel"/>
+    <int:channel id="premiereBankChannel"/>
+    <int:channel id="qualityBankChannel"/>
+    <int:channel id="friendlyBankChannel"/>
+    <int:channel id="easyBankChannel"/>
+
+    <!-- JMS Outbound Adapter für jede Bank, der die Nachricht zur jeweiligen JMS Queue sendet -->
+    <int-jms:outbound-channel-adapter channel="exclusiveBankChannel" destination="exclusiveBankQueue" jms-template="jmsTemplate"/>
+    <int-jms:outbound-channel-adapter channel="premiereBankChannel" destination="premiereBankQueue" jms-template="jmsTemplate"/>
+    <int-jms:outbound-channel-adapter channel="qualityBankChannel" destination="qualityBankQueue" jms-template="jmsTemplate"/>
+    <int-jms:outbound-channel-adapter channel="friendlyBankChannel" destination="friendlyBankQueue" jms-template="jmsTemplate"/>
+    <int-jms:outbound-channel-adapter channel="easyBankChannel" destination="easyBankQueue" jms-template="jmsTemplate"/>
+
+    <!-- Aggregator für das Zusammenführen der Antworten von den Banken -->
+    <aggregator input-channel="loanQuotesChannel"
+                ref="loanQuoteAggregator"
+                method="aggregateQuotes"
+                output-channel="aggregatedQuotesChannel"/>
+
+    <!-- Definition der JMS Template und Connection Factory für die Kommunikation mit dem JMS Broker -->
+    <beans:bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+        <beans:property name="connectionFactory" ref="jmsConnectionFactory"/>
+    </beans:bean>
+    <beans:bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+        <beans:property name="brokerURL" value="tcp://localhost:61616"/>
+    </beans:bean>
+</beans:beans>
