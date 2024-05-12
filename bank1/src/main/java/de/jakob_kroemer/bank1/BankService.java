@@ -15,18 +15,18 @@ import java.util.Random;
 @Service
 public class BankService {
 
-    private static final Logger logger = LoggerFactory.getLogger(BankService.class);
-
+    
     @Autowired
     private JmsTemplate jmsTemplate;
-
-    private Random random = new Random();
+    
+    private Random random 					= new Random();
+    private static final Logger logger 		= LoggerFactory.getLogger(BankService.class);
+    private static final String BANK_NAME 	= System.getProperty("bank.name", "Default Bank");
 
     @JmsListener(destination = "loanRequestsChannel")
     public void receiveMessage(BankRequest bankRequest) {
         logger.info("Received bank request with SSN: {} & UUID: {}", bankRequest.getSsn(), bankRequest.getUuid());
         float interestRate = random.nextFloat() * 10;
-
         int delay = (int) (Math.sqrt(random.nextDouble()) * 15); // Verzögert die Antwortzeit zwischen 0 und 120 Sekunden
         try {
             Thread.sleep(delay * 1000); 
@@ -34,8 +34,9 @@ public class BankService {
             Thread.currentThread().interrupt();
         }
 
-        BankResponse response = new BankResponse(bankRequest.getUuid(), interestRate);
+        BankResponse response = new BankResponse(bankRequest.getUuid(), interestRate, BANK_NAME);
         jmsTemplate.convertAndSend("responseQueue", response);
-        logger.info("Sent response with UUID: {} and Interest Rate: {}", response.getUuid(), response.getInterestRrate());
+        logger.info("Sent response with UUID: {} and Interest Rate: {}, Bank: {}", response.getUuid(), response.getInterestRrate(), response.getBankName());
     }
 }
+
