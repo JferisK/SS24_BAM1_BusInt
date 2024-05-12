@@ -22,10 +22,7 @@ public class BankCommunicationService {
             request.getCustomer().getSsn()
         );
 
-        jmsTemplate.convertAndSend("loanRequestsChannel", bankRequest, message -> {
-        	message.setStringProperty("_type", "de.jakob_kroemer.bank1.BankRequest");
-            return message;
-        });
+        jmsTemplate.convertAndSend("loanRequestsChannel", bankRequest);
 
     }
 }

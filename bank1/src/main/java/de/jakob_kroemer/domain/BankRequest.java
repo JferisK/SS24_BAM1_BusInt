@@ -1,4 +1,4 @@
-package de.jakob_kroemer.bank1;
+package de.jakob_kroemer.domain;
 
 import java.io.Serializable;
 

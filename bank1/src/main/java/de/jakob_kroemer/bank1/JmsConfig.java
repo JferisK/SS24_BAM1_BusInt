@@ -7,6 +7,7 @@ import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
 import org.springframework.jms.support.converter.MappingJackson2MessageConverter;
 import org.springframework.jms.support.converter.MessageType;
 
+import de.jakob_kroemer.domain.BankRequest;
 import jakarta.jms.ConnectionFactory;
 
 import java.util.HashMap;
