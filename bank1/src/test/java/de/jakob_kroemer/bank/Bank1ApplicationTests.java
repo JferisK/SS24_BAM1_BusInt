@@ -1,4 +1,4 @@
-package de.jakob_kroemer.bank1;
+package de.jakob_kroemer.bank;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

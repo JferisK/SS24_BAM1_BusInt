@@ -1,13 +1,13 @@
-package de.jakob_kroemer.bank1;
+package de.jakob_kroemer.bank;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class Bank1Application {
+public class Commerzbank {
 
 	public static void main(String[] args) {
-		SpringApplication.run(Bank1Application.class, args);
+		SpringApplication.run(Commerzbank.class, args);
 	}
 
 }

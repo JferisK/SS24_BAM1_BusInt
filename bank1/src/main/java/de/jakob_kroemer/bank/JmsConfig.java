@@ -1,4 +1,4 @@
-package de.jakob_kroemer.bank1;
+package de.jakob_kroemer.bank;
 
 import org.springframework.boot.autoconfigure.jms.DefaultJmsListenerContainerFactoryConfigurer;
 import org.springframework.context.annotation.Bean;
