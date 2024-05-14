@@ -30,11 +30,12 @@ public class LoanBrokerService {
     	float 	amount 		= request.getLoanAmount();
     	int		term		= request.getTerm();
     	
-    	CreditScoreResponse creditScoreResponse = creditBureauService.getCreditScore(ssn, amount, term, uuid);
-    	int creditScore = creditScoreResponse.getScore();
-    	//int creditScore = 500;
-    	bankCommunicationService.sendLoanDetailsToBank(request, creditScore, uuid);
+    	//CreditScoreResponse creditScoreResponse = creditBureauService.getCreditScore(ssn, amount, term, uuid);
+    	//int creditScore = creditScoreResponse.getScore();
+    	int creditScore = 820;
     	logger.info("6: LoanBrokerService score {}", creditScore); 
+ 
+    	bankCommunicationService.sendLoanDetailsToBank(request, creditScore, uuid);
     	
     	ret.setRate(creditScore);
     	ret.setUUID(uuid);

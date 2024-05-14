@@ -62,4 +62,12 @@ public class BankRequest implements Serializable{
 	public void setSsn(String ssn) {
 		this.ssn = ssn;
 	}
+
+	@Override
+	public String toString() {
+		return "BankRequest [uuid=" + uuid + ", term=" + term + ", amount=" + amount + ", score=" + score + ", ssn="
+				+ ssn + "]";
+	}
+	
+	
 }

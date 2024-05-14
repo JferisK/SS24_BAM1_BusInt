@@ -98,6 +98,7 @@
             <version>${spring-boot.version}</version>
             <!-- Starter für Webanwendungen -->
         </dependency>
+        
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-library</artifactId>
@@ -105,6 +106,7 @@
             <scope>test</scope>
             <!-- Bibliothek für Matcher-Objekte, verwendet in Tests -->
         </dependency>
+        
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
@@ -132,7 +134,13 @@
 		    <artifactId>activemq-broker</artifactId>
 		    <version>6.1.2</version> <!-- Ersetzen Sie YourActiveMQVersion mit der Version, die Sie verwenden -->
 		</dependency>
-
+		
+		
+		<dependency>
+	        <groupId>org.springframework</groupId>
+	        <artifactId>spring-context</artifactId>
+	        <version>6.1.6</version>
+	    </dependency>
         <!-- Weitere Abhängigkeiten können hier hinzugefügt werden -->
     </dependencies>
 

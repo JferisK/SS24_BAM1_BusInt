@@ -1,3 +1,4 @@
+de\jakob_kroemer\config\RoutingConfig.class
 de\jakob_kroemer\service\LoanBrokerService.class
 de\jakob_kroemer\config\JmsConfig.class
 de\jakob_kroemer\controller\LoanBrokerSharkDetector.class
@@ -12,8 +13,10 @@ de\jakob_kroemer\domain\CreditReport.class
 de\jakob_kroemer\config\RestClientConfig.class
 de\jakob_kroemer\domain\Address.class
 de\jakob_kroemer\domain\LoanRequest.class
+de\jakob_kroemer\config\RoutingConfig$CreditInfo.class
 de\jakob_kroemer\service\BankResponseHandler.class
 de\jakob_kroemer\domain\LoanQuote.class
 de\jakob_kroemer\LoanBrokerApplication.class
 de\jakob_kroemer\aggregator\LoanQuoteAggregator.class
 de\jakob_kroemer\controller\LoanBrokerController.class
+de\jakob_kroemer\config\MessagingConfig.class

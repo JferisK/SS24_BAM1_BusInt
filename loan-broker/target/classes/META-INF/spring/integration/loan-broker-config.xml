@@ -19,34 +19,22 @@
     </gateway>
 
     <!-- Nachrichtenverarbeitungskette für eingehende Kreditanfragen -->
-    <chain input-channel="loanRequestsChannel">
-        <!-- Bereicherung der Header mit dem Credit Score -->
-        <header-enricher>
-            <header name="creditScore" expression="@creditBureauService.getCreditScore(payload.ssn)"/>
-        </header-enricher>
-        <!-- Routing der Nachrichten basierend auf dem Credit Score zu verschiedenen Banken -->
-        <recipient-list-router>
-            <recipient channel="loanRequestsChannel"/>
-            <recipient selector-expression="headers['creditScore'] > 750" channel="premiereBankChannel"/>
-            <recipient selector-expression="headers['creditScore'] > 700" channel="qualityBankChannel"/>
-            <recipient selector-expression="headers['creditScore'] > 650" channel="friendlyBankChannel"/>
-            <recipient channel="easyBankChannel"/>
-        </recipient-list-router>
-    </chain>
+	<chain input-channel="loanRequestsChannel">
+	    <!-- Bereicherung der Nachrichten mit Credit Score, Kreditsumme und Laufzeit -->
+	    <header-enricher>
+	        <header name="creditInfo" expression="@creditBureauService.getCreditScore(payload.ssn, payload.amount, payload.term, payload.uuid)"/>
+	    </header-enricher>
+	
+	    <!-- Routing der Nachrichten basierend auf den Kriterien aus der CreditScoreResponse -->
+	    <recipient-list-router>
+	        <!-- Beispiel für das Routing basierend auf der CreditScoreResponse -->
+	        <recipient selector-expression="headers['creditInfo'].score > 750 and headers['creditInfo'].amount between 5000 and 20000 and headers['creditInfo'].term between 12 and 60" channel="deutscheBankChannel"/>
+	        <recipient selector-expression="headers['creditInfo'].score > 700 and headers['creditInfo'].amount between 2000 and 15000 and headers['creditInfo'].term between 6 and 36" channel="qualityBankChannel"/>
+	        <recipient selector-expression="headers['creditInfo'].score > 650 and headers['creditInfo'].amount between 1000 and 10000 and headers['creditInfo'].term between 12 and 48" channel="friendlyBankChannel"/>
+	        <recipient channel="easyBankChannel"/> <!-- Beispiel für einen Standardkanal ohne spezifische Kriterien -->
+	    </recipient-list-router>
+	</chain>
 
-    <!-- Definition der Ausgangskanäle für jede Bank -->
-    <int:channel id="exclusiveBankChannel"/>
-    <int:channel id="premiereBankChannel"/>
-    <int:channel id="qualityBankChannel"/>
-    <int:channel id="friendlyBankChannel"/>
-    <int:channel id="easyBankChannel"/>
-
-    <!-- JMS Outbound Adapter für jede Bank, der die Nachricht zur jeweiligen JMS Queue sendet -->
-    <int-jms:outbound-channel-adapter channel="exclusiveBankChannel" destination="exclusiveBankQueue" jms-template="jmsTemplate"/>
-    <int-jms:outbound-channel-adapter channel="premiereBankChannel" destination="premiereBankQueue" jms-template="jmsTemplate"/>
-    <int-jms:outbound-channel-adapter channel="qualityBankChannel" destination="qualityBankQueue" jms-template="jmsTemplate"/>
-    <int-jms:outbound-channel-adapter channel="friendlyBankChannel" destination="friendlyBankQueue" jms-template="jmsTemplate"/>
-    <int-jms:outbound-channel-adapter channel="easyBankChannel" destination="easyBankQueue" jms-template="jmsTemplate"/>
 
     <!-- Aggregator für das Zusammenführen der Antworten von den Banken -->
     <aggregator input-channel="loanQuotesChannel"
