@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans:beans xmlns="http://www.springframework.org/schema/integration"
     xmlns:beans="http://www.springframework.org/schema/beans"
+    xmlns:int="http://www.springframework.org/schema/integration"
     xmlns:jms="http://www.springframework.org/schema/integration/jms"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="
@@ -11,41 +12,35 @@
     <!-- Definition des CreditBureauService -->
     <beans:bean id="creditBureauService" class="de.jakob_kroemer.service.CreditBureauService"/>
 
-    <!-- Konfiguration des LoanBrokerGateway -->
+    <!-- Konfiguration des LoanBrokerGateway 
     <gateway id="loanBrokerGateway"
             default-request-channel="loanRequestsChannel"
             service-interface="de.jakob_kroemer.gateway.LoanBrokerGateway">
         <method name="getBestLoanQuote" request-channel="loanRequestsChannel"/>
-    </gateway>
+    </gateway>-->
 
-    <!-- Nachrichtenverarbeitungskette für eingehende Kreditanfragen -->
-	<chain input-channel="loanRequestsChannel">
-	    <!-- Bereicherung der Nachrichten mit Credit Score, Kreditsumme und Laufzeit -->
-	    <header-enricher>
-	        <header name="creditInfo" expression="@creditBureauService.getCreditScore(payload.ssn, payload.amount, payload.term, payload.uuid)"/>
-	    </header-enricher>
-	
-	    <!-- Routing der Nachrichten basierend auf den Kriterien aus der CreditScoreResponse -->
-	    <recipient-list-router>
-	        <!-- Beispiel für das Routing basierend auf der CreditScoreResponse -->
-	        <recipient selector-expression="headers['creditInfo'].score > 750 and headers['creditInfo'].amount between 5000 and 20000 and headers['creditInfo'].term between 12 and 60" channel="deutscheBankChannel"/>
-	        <recipient selector-expression="headers['creditInfo'].score > 700 and headers['creditInfo'].amount between 2000 and 15000 and headers['creditInfo'].term between 6 and 36" channel="qualityBankChannel"/>
-	        <recipient selector-expression="headers['creditInfo'].score > 650 and headers['creditInfo'].amount between 1000 and 10000 and headers['creditInfo'].term between 12 and 48" channel="friendlyBankChannel"/>
-	        <recipient channel="easyBankChannel"/> <!-- Beispiel für einen Standardkanal ohne spezifische Kriterien -->
-	    </recipient-list-router>
-	</chain>
+    <!-- Direkte Kanäle für die Routing-Ziele -->
+    <beans:bean id="deutscheBankChannel" class="org.springframework.integration.channel.DirectChannel"/>
+    <beans:bean id="commerzbankChannel" class="org.springframework.integration.channel.DirectChannel"/>
+    <beans:bean id="dzBankChannel" class="org.springframework.integration.channel.DirectChannel"/>
+    <beans:bean id="creditSuisseChannel" class="org.springframework.integration.channel.DirectChannel"/>
 
+    <!-- RecipientListRouter direkt verbunden mit dem Eingangskanal -->
+    <int:recipient-list-router input-channel="loanRequestsChannel">
+        <int:recipient channel="deutscheBankChannel"/>
+        <int:recipient channel="commerzbankChannel"/>
+        <int:recipient channel="dzBankChannel"/>
+        <int:recipient channel="creditSuisseChannel"/>
+    </int:recipient-list-router>
 
-    <!-- Aggregator für das Zusammenführen der Antworten von den Banken -->
-    <aggregator input-channel="loanQuotesChannel"
-                ref="loanQuoteAggregator"
-                method="aggregateQuotes"
-                output-channel="aggregatedQuotesChannel"/>
+    <!-- Logging nach dem Routing -->
+    <int:logging-channel-adapter channel="loanRequestsChannel" level="INFO"/>
+    <int:logging-channel-adapter channel="deutscheBankChannel" level="INFO"/>
+    <int:logging-channel-adapter channel="commerzbankChannel" level="INFO"/>
+    <int:logging-channel-adapter channel="dzBankChannel" level="INFO"/>
+    <int:logging-channel-adapter channel="creditSuisseChannel" level="INFO"/>
 
-    <!-- Definition der JMS Template und Connection Factory für die Kommunikation mit dem JMS Broker -->
-    <beans:bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
-        <beans:property name="connectionFactory" ref="jmsConnectionFactory"/>
-    </beans:bean>
+    <!-- Definition der JMS Connection Factory -->
     <beans:bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
         <beans:property name="brokerURL" value="tcp://localhost:61616"/>
     </beans:bean>

@@ -3,14 +3,12 @@ C:\Users\Jakobs BANGER PC\OneDrive\Studium\WI\BAM\00_Semester\01_SS_24\Business 
 C:\Users\Jakobs BANGER PC\OneDrive\Studium\WI\BAM\00_Semester\01_SS_24\Business Integration\11_Aufgaben\SS24_BAM1_BusInt\loan-broker\src\main\java\de\jakob_kroemer\domain\CreditScoreResponse.java
 C:\Users\Jakobs BANGER PC\OneDrive\Studium\WI\BAM\00_Semester\01_SS_24\Business Integration\11_Aufgaben\SS24_BAM1_BusInt\loan-broker\src\main\java\de\jakob_kroemer\service\BankResponseHandler.java
 C:\Users\Jakobs BANGER PC\OneDrive\Studium\WI\BAM\00_Semester\01_SS_24\Business Integration\11_Aufgaben\SS24_BAM1_BusInt\loan-broker\src\main\java\de\jakob_kroemer\domain\LoanQuote.java
-C:\Users\Jakobs BANGER PC\OneDrive\Studium\WI\BAM\00_Semester\01_SS_24\Business Integration\11_Aufgaben\SS24_BAM1_BusInt\loan-broker\src\main\java\de\jakob_kroemer\config\MessagingConfig.java
 C:\Users\Jakobs BANGER PC\OneDrive\Studium\WI\BAM\00_Semester\01_SS_24\Business Integration\11_Aufgaben\SS24_BAM1_BusInt\loan-broker\src\main\java\de\jakob_kroemer\gateway\LoanBrokerGateway.java
 C:\Users\Jakobs BANGER PC\OneDrive\Studium\WI\BAM\00_Semester\01_SS_24\Business Integration\11_Aufgaben\SS24_BAM1_BusInt\loan-broker\src\main\java\de\jakob_kroemer\domain\Customer.java
 C:\Users\Jakobs BANGER PC\OneDrive\Studium\WI\BAM\00_Semester\01_SS_24\Business Integration\11_Aufgaben\SS24_BAM1_BusInt\loan-broker\src\main\java\de\jakob_kroemer\config\JmsConfig.java
 C:\Users\Jakobs BANGER PC\OneDrive\Studium\WI\BAM\00_Semester\01_SS_24\Business Integration\11_Aufgaben\SS24_BAM1_BusInt\loan-broker\src\main\java\de\jakob_kroemer\controller\LoanBrokerSharkDetector.java
 C:\Users\Jakobs BANGER PC\OneDrive\Studium\WI\BAM\00_Semester\01_SS_24\Business Integration\11_Aufgaben\SS24_BAM1_BusInt\loan-broker\src\main\java\de\jakob_kroemer\service\LoanBrokerService.java
 C:\Users\Jakobs BANGER PC\OneDrive\Studium\WI\BAM\00_Semester\01_SS_24\Business Integration\11_Aufgaben\SS24_BAM1_BusInt\loan-broker\src\main\java\de\jakob_kroemer\domain\LoanRequest.java
-C:\Users\Jakobs BANGER PC\OneDrive\Studium\WI\BAM\00_Semester\01_SS_24\Business Integration\11_Aufgaben\SS24_BAM1_BusInt\loan-broker\src\main\java\de\jakob_kroemer\config\RoutingConfig.java
 C:\Users\Jakobs BANGER PC\OneDrive\Studium\WI\BAM\00_Semester\01_SS_24\Business Integration\11_Aufgaben\SS24_BAM1_BusInt\loan-broker\src\main\java\de\jakob_kroemer\service\CreditBureauService.java
 C:\Users\Jakobs BANGER PC\OneDrive\Studium\WI\BAM\00_Semester\01_SS_24\Business Integration\11_Aufgaben\SS24_BAM1_BusInt\loan-broker\src\main\java\de\jakob_kroemer\LoanBrokerApplication.java
 C:\Users\Jakobs BANGER PC\OneDrive\Studium\WI\BAM\00_Semester\01_SS_24\Business Integration\11_Aufgaben\SS24_BAM1_BusInt\loan-broker\src\main\java\de\jakob_kroemer\domain\Address.java
