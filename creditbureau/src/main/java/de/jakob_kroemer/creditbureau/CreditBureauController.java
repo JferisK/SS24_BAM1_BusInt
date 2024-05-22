@@ -25,7 +25,7 @@ public class CreditBureauController {
         logger.info("Received request for credit score with SSN: {}, Amount: {}, Term: {}", ssn, amount, term);
         
         Timestamp timestamp 	= new Timestamp(System.currentTimeMillis());
-        int score 				= ThreadLocalRandom.current().nextInt(300, 850);
+        int score 				= ThreadLocalRandom.current().nextInt(0, 1000);
         
         CreditScoreResponse response = creditScoreService.getCreditScore(timestamp, uuid, ssn, amount, term, score);
         logger.info("Sending credit score {} for SSN {}", response.getScore(), ssn);

@@ -5,15 +5,15 @@ import java.io.Serializable;
 public class BankResponse implements Serializable{
 	private static final long serialVersionUID = -7029036442706103080L;
 	private String uuid;
-	private float interestRrate;
+	private float interestRate;
 	private String bankName;
 	
 	public BankResponse() {
     }
 	
-	public BankResponse(String uuid, float interestRrate, String bankName) {
+	public BankResponse(String uuid, float interestRate, String bankName) {
 		this.uuid = uuid;
-		this.interestRrate = interestRrate;
+		this.interestRate = interestRate;
 		this.bankName = bankName;
 	}
 
@@ -25,12 +25,12 @@ public class BankResponse implements Serializable{
 		this.uuid = uuid;
 	}
 
-	public float getInterestRrate() {
-		return interestRrate;
+	public float getInterestRate() {
+		return interestRate;
 	}
 
-	public void setInterestRrate(float interestRrate) {
-		this.interestRrate = interestRrate;
+	public void setInterestRate(float interestRrate) {
+		this.interestRate = interestRrate;
 	}
 
 	public String getBankName() {

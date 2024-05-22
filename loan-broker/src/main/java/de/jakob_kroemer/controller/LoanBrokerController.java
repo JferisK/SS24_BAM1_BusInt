@@ -1,11 +1,14 @@
 package de.jakob_kroemer.controller;
 
+import java.util.UUID;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,7 +37,7 @@ public class LoanBrokerController {
     	logger.info("1: LoanBrokerController Request {}", loanRequest.toString()); // Using info level for demonstration
         return loanBrokerService.processLoanRequest(loanRequest);
     }
-    
+
     @GetMapping("/greeting")
     public String greeting() {
         return "Hello, World!";

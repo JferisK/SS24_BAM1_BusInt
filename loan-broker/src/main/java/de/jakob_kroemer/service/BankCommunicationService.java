@@ -25,7 +25,7 @@ public class BankCommunicationService {
 
     private static final Logger logger = LoggerFactory.getLogger(BankCommunicationService.class);
 
-    public void sendLoanDetailsToBank(LoanRequest request, int creditScore, UUID uuid) {
+    public int sendLoanDetailsToBank(LoanRequest request, int creditScore, UUID uuid) {
         List<BankConfiguration> configs = fetchBankConfigurations();
         BankRequest bankRequest = new BankRequest(
             uuid.toString(),
@@ -35,18 +35,19 @@ public class BankCommunicationService {
             request.getCustomer().getSsn()
         );
 
-        boolean matched = false;
+        int sentRequests = 0;
         for (BankConfiguration config : configs) {
             if (matchesCriteria(request, creditScore, config)) {
                 jmsTemplate.convertAndSend(config.getBankChannel(), bankRequest);
                 logger.info("Sent loan details to {} via channel {}", config.getBankName(), config.getBankChannel());
-                matched = true;
+                sentRequests++;
             }
         }
 
-        if (!matched) {
+        if (sentRequests == 0) {
             logger.warn("No bank matched criteria for request {}", request);
         }
+        return sentRequests;
     }
 
     private List<BankConfiguration> fetchBankConfigurations() {

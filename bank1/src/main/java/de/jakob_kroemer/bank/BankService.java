@@ -37,7 +37,7 @@ public class BankService {
             bankRequest.getTerm() >= MIN_TERM && bankRequest.getTerm() <= MAX_TERM) {
 
             float interestRate = random.nextFloat() * 10;
-            int delay = (int) (Math.sqrt(random.nextDouble()) * 15);
+            int delay = (int) (Math.sqrt(random.nextDouble()) * 20);
             try {
                 Thread.sleep(delay * 1000);
             } catch (InterruptedException e) {
@@ -46,7 +46,7 @@ public class BankService {
 
             BankResponse response = new BankResponse(bankRequest.getUuid(), interestRate, BANK_NAME);
             jmsTemplate.convertAndSend("responseQueue", response);
-            logger.info("Sent response with UUID: {} and Interest Rate: {}, Bank: {}", response.getUuid(), response.getInterestRrate(), response.getBankName());
+            logger.info("Sent response with UUID: {} and Interest Rate: {}, Bank: {}", response.getUuid(), response.getInterestRate(), response.getBankName());
         } else {
             logger.info("Bank request does not meet the criteria: {}", bankRequest);
         }
