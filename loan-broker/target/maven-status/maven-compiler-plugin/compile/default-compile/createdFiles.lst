@@ -6,12 +6,14 @@ de\jakob_kroemer\gateway\LoanBrokerGateway.class
 de\jakob_kroemer\domain\BankResponse.class
 de\jakob_kroemer\service\BankCommunicationService.class
 de\jakob_kroemer\service\CreditBureauService.class
+de\jakob_kroemer\domain\BankConfiguration.class
 de\jakob_kroemer\domain\CreditScoreResponse.class
 de\jakob_kroemer\domain\BankRequest.class
 de\jakob_kroemer\domain\CreditReport.class
 de\jakob_kroemer\config\RestClientConfig.class
 de\jakob_kroemer\domain\Address.class
 de\jakob_kroemer\domain\LoanRequest.class
+de\jakob_kroemer\repository\BankConfigurationRepository.class
 de\jakob_kroemer\service\BankResponseHandler.class
 de\jakob_kroemer\domain\LoanQuote.class
 de\jakob_kroemer\LoanBrokerApplication.class

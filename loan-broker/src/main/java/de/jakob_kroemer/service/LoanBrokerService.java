@@ -31,9 +31,9 @@ public class LoanBrokerService {
     	int		term		= request.getTerm();
         UUID uuid 			= UUID.randomUUID();
     	
-    	CreditScoreResponse creditScoreResponse = creditBureauService.getCreditScore(ssn, amount, term, uuid);
-    	int creditScore = creditScoreResponse.getScore();
-    	//int creditScore = 820;
+    	//CreditScoreResponse creditScoreResponse = creditBureauService.getCreditScore(ssn, amount, term, uuid);
+    	//int creditScore = creditScoreResponse.getScore();
+    	int creditScore = 820;
     	logger.info("6: LoanBrokerService score {}", creditScore); 
  
     	bankCommunicationService.sendLoanDetailsToBank(request, creditScore, uuid);
