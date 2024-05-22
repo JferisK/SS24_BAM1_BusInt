@@ -13,7 +13,7 @@ public class BankResponseHandler {
 
     @JmsListener(destination = "responseQueue")
     public void receiveResponse(BankResponse response) {
-        logger.info("Received response with UUID: {} and Interest Rate: {}", response.getUuid(), response.getInterestRrate());
+        logger.info("Received response from {} with UUID: {} and Interest Rate: {}", response.getBankName(), response.getUuid(), response.getInterestRrate());
         // Hier könnten weitere Verarbeitungen implementiert werden, z.B. das Aktualisieren einer Datenbank oder das Triggering weiterer Geschäftsprozesse.
     }
 }

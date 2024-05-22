@@ -20,7 +20,7 @@ public class BankService {
 
     private Random random = new Random();
     private static final Logger logger = LoggerFactory.getLogger(BankService.class);
-    private static final String BANK_NAME = System.getProperty("bank.name", "Default Bank");
+    private static final String BANK_NAME = "Commerzbank";
 
     private static final int MIN_CREDIT_SCORE = 750;
     private static final int MIN_LOAN_AMOUNT = 15000;
