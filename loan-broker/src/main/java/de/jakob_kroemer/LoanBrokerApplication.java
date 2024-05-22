@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ImportResource;
 
 @SpringBootApplication
-@ImportResource("classpath:META-INF/spring/integration/loan-broker-config.xml")
+//@ImportResource("classpath:META-INF/spring/integration/loan-broker-config.xml")
 public class LoanBrokerApplication {
 
     public static void main(String[] args) {

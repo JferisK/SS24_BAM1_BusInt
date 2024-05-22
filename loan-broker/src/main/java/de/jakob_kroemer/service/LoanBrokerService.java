@@ -23,16 +23,17 @@ public class LoanBrokerService {
 
     public LoanQuote processLoanRequest(LoanRequest request) {
     	LoanQuote ret = new LoanQuote();
-        UUID uuid = UUID.randomUUID();
+    	
     	logger.info("2: LoanBrokerService Input{}", request.getCustomer().getSsn());
     	
     	String 	ssn 		= request.getCustomer().getSsn();
     	float 	amount 		= request.getLoanAmount();
     	int		term		= request.getTerm();
+        UUID uuid 			= UUID.randomUUID();
     	
-    	//CreditScoreResponse creditScoreResponse = creditBureauService.getCreditScore(ssn, amount, term, uuid);
-    	//int creditScore = creditScoreResponse.getScore();
-    	int creditScore = 820;
+    	CreditScoreResponse creditScoreResponse = creditBureauService.getCreditScore(ssn, amount, term, uuid);
+    	int creditScore = creditScoreResponse.getScore();
+    	//int creditScore = 820;
     	logger.info("6: LoanBrokerService score {}", creditScore); 
  
     	bankCommunicationService.sendLoanDetailsToBank(request, creditScore, uuid);

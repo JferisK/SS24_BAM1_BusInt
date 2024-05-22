@@ -89,7 +89,6 @@ public class LoanQuote implements Comparable<LoanQuote>{
 		UUID = uUID;
 	}
 
-	@Override
 	public int compareTo(LoanQuote other) {
 		if (this.rate > other.rate) { //NOSONAR
 			return 1;

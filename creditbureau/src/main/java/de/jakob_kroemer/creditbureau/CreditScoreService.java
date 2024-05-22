@@ -13,8 +13,7 @@ public class CreditScoreService {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public CreditScoreResponse getCreditScore(Timestamp timestamp, String uuid, String ssn, float amount, int term) {
-        int score = ThreadLocalRandom.current().nextInt(300, 850);
+    public CreditScoreResponse getCreditScore(Timestamp timestamp, String uuid, String ssn, float amount, int term, int score) {
         String sql = "INSERT INTO CreditOffers (timestamp, UUID, ssn, amount, term, score) VALUES (?, ?, ?, ?, ?, ?)";
         jdbcTemplate.update(
         		sql, 

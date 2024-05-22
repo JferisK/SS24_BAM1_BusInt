@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.sql.Timestamp;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 @RestController
 public class CreditBureauController {
@@ -23,8 +24,10 @@ public class CreditBureauController {
     public CreditScoreResponse getCreditScore(@RequestParam String ssn, @RequestParam float amount, @RequestParam int term, @RequestParam String uuid) {
         logger.info("Received request for credit score with SSN: {}, Amount: {}, Term: {}", ssn, amount, term);
         
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        CreditScoreResponse response = creditScoreService.getCreditScore(timestamp, uuid, ssn, amount, term);
+        Timestamp timestamp 	= new Timestamp(System.currentTimeMillis());
+        int score 				= ThreadLocalRandom.current().nextInt(300, 850);
+        
+        CreditScoreResponse response = creditScoreService.getCreditScore(timestamp, uuid, ssn, amount, term, score);
         logger.info("Sending credit score {} for SSN {}", response.getScore(), ssn);
         return response;
     }
