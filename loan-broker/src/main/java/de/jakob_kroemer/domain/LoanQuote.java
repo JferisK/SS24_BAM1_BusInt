@@ -26,13 +26,14 @@ import java.util.UUID;
 public class LoanQuote implements Comparable<LoanQuote>{
 
 	private String lender;
-	private Date quoteDate;
-	private Date expirationDate;
-	private double amount;
-	private int term;
-	private float rate;
-	private UUID UUID;
-
+    private Date quoteDate;
+    private Date expirationDate;
+    private double amount;
+    private int term;
+    private float rate;
+    private UUID uuid;
+    private String status;  
+    
 	public String getLender() {
 		return lender;
 	}
@@ -81,12 +82,20 @@ public class LoanQuote implements Comparable<LoanQuote>{
 		this.rate = rate;
 	}
 
-	public UUID getUUID() {
-		return UUID;
+	public UUID getUuid() {
+		return uuid;
 	}
 
-	public void setUUID(UUID uUID) {
-		UUID = uUID;
+	public void setUuid(UUID uuid) {
+		this.uuid = uuid;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	public int compareTo(LoanQuote other) {

@@ -46,7 +46,7 @@ public class LoanBrokerService {
 
         CreditScoreResponse creditScoreResponse = creditBureauService.getCreditScore(ssn, amount, term, uuid);
         int creditScore = creditScoreResponse.getScore();
-        //int creditScore = 820;
+        // int creditScore = 820;
         logger.info("6: LoanBrokerService score {}", creditScore);
 
         int expectedResponses = bankCommunicationService.sendLoanDetailsToBank(request, creditScore, uuid);
@@ -58,6 +58,7 @@ public class LoanBrokerService {
                 bankResponseHandler.awaitLatch(uuid, 15, TimeUnit.SECONDS);
             } catch (InterruptedException e) {
                 logger.error("Error waiting for aggregation result", e);
+                ret.setStatus("Error waiting for aggregation result: " + e.getMessage());
                 Thread.currentThread().interrupt();
             }
 
@@ -68,19 +69,26 @@ public class LoanBrokerService {
                     ret.setRate(bestQuote.getInterestRate());
                     ret.setLender(bestQuote.getBankName());
                     ret.setQuoteDate(new Date());
-                    ret.setExpirationDate(new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(30))); 
+                    ret.setExpirationDate(new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(30)));
                     logger.info("Best quote received from {} with rate {}", bestQuote.getBankName(), bestQuote.getInterestRate());
+                    ret.setStatus("Best offer found");
                 } else {
-                    logger.warn("No quotes received for request with UUID: {}", uuid);
+                    String message = "No quotes received for request with UUID: " + uuid;
+                    logger.warn(message);
+                    ret.setStatus(message);
                 }
             } else {
-                logger.warn("No aggregation result found for UUID: {}", uuid);
+                String message = "No aggregation result found for UUID: " + uuid;
+                logger.warn(message);
+                ret.setStatus(message);
             }
         } else {
-            logger.warn("No banks matched criteria, no requests sent.");
+            String message = "No banks matched criteria, no requests sent.";
+            logger.warn(message);
+            ret.setStatus(message);
         }
 
-        ret.setUUID(uuid);
+        ret.setUuid(uuid);
         ret.setAmount(amount);
         ret.setTerm(term);
         return ret;
