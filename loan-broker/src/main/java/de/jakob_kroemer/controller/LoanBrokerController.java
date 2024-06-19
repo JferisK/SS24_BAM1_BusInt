@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import de.jakob_kroemer.domain.LoanRequest;
+import de.jakob_kroemer.domain.ConfirmationMessage;
 import de.jakob_kroemer.domain.LoanQuote;
 import de.jakob_kroemer.service.CreditBureauService;
 import de.jakob_kroemer.service.LoanBrokerService; 
@@ -33,7 +34,7 @@ public class LoanBrokerController {
      * @return The loan quote with calculated interest rate and terms.
      */
     @PostMapping("/loan")
-    public LoanQuote submitLoanRequest(@RequestBody LoanRequest loanRequest) {
+    public ConfirmationMessage submitLoanRequest(@RequestBody LoanRequest loanRequest) {
     	logger.info("1: LoanBrokerController Request {}", loanRequest.toString()); // Using info level for demonstration
         return loanBrokerService.processLoanRequest(loanRequest);
     }

@@ -48,4 +48,5 @@ public class LoanRequest {
     public void setCreditScore(int creditScore) {
         this.creditScore = creditScore;
     }
+    
 }

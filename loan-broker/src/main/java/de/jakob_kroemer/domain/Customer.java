@@ -5,14 +5,16 @@ public class Customer {
     private String lastName;
     private Address address;
     private String ssn;
+    private String email;
 
 	// Konstruktoren
     public Customer() {}
 
-    public Customer(String firstName, String lastName, Address address) {
+    public Customer(String firstName, String lastName, Address address, String email) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.address = address;
+        this.email = email;
     }
 
     // Getter und Setter
@@ -47,4 +49,13 @@ public class Customer {
 	public void setSsn(String ssn) {
 		this.ssn = ssn;
 	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	
 }
