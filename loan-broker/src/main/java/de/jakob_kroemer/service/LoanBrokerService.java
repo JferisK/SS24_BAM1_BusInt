@@ -53,6 +53,7 @@ public class LoanBrokerService {
         logger.info("2: LoanBrokerService Input{}", request.getCustomer().getSsn());
 
         String ssn = request.getCustomer().getSsn();
+        String customerName = request.getCustomer().getFirstName() + " " + request.getCustomer().getLastName();
         float amount = request.getLoanAmount();
         int term = request.getTerm();
         UUID uuid = UUID.randomUUID();
@@ -92,24 +93,24 @@ public class LoanBrokerService {
                             ret.setExpirationDate(new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(30)));
                             logger.info("Best quote received from {} with rate {}", bestQuote.getBankName(), bestQuote.getInterestRate());
                             ret.setStatus("Best offer found");
-                            emailContent.setBody(buildEmailBody(ret, request, uuid));
+                            emailContent.setBody(buildEmailBody(customerName, ret, request, uuid));
                         } else {
                             String message = "No quotes received for request with UUID: " + uuid;
                             logger.warn(message);
                             ret.setStatus(message);
-                            emailContent.setBody(buildEmailBody(ret, request, uuid) + "<br><br>" + message);
+                            emailContent.setBody(buildEmailBody(customerName, ret, request, uuid) + "<br><br>" + message);
                         }
                     } else {
                         String message = "No aggregation result found for UUID: " + uuid;
                         logger.warn(message);
                         ret.setStatus(message);
-                        emailContent.setBody(buildEmailBody(ret, request, uuid) + "<br><br>" + message);
+                        emailContent.setBody(buildEmailBody(customerName, ret, request, uuid) + "<br><br>" + message);
                     }
                 } else {
                     String message = "No banks matched criteria, no requests sent.";
                     logger.warn(message);
                     ret.setStatus(message);
-                    emailContent.setBody(buildEmailBody(ret, request, uuid) + "<br><br>" + message);
+                    emailContent.setBody(buildEmailBody(customerName, ret, request, uuid) + "<br><br>" + message);
                 }
 
                 ret.setUuid(uuid);
@@ -122,19 +123,21 @@ public class LoanBrokerService {
             } catch (Exception e) {
                 logger.error("Exception during processing loan request", e);
                 emailContent.setBody("An error occurred during processing: " + e.getMessage());
-                try {
-					sendEmail(request.getCustomer().getEmail(), emailContent);
-				} catch (UnsupportedEncodingException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+                sendEmail(request.getCustomer().getEmail(), emailContent);
             }
         });
 
         return confirmation;
     }
 
-    private String buildEmailBody(LoanQuote quote, LoanRequest request, UUID uuid) {
+    private String buildEmailBody(String customerName, LoanQuote quote, LoanRequest request, UUID uuid) {
+        String introText = "vielen Dank für Ihre Darlehensanfrage. Wir haben Ihre Anfrage erhalten und werden sie umgehend bearbeiten. " +
+                "Nachfolgend finden Sie die Details Ihrer Anfrage sowie das beste verfügbare Angebot, falls vorhanden.";
+
+        String noQuoteText = "Leider konnten wir kein passendes Angebot für Ihre Anfrage finden. Wir empfehlen Ihnen, es zu einem späteren Zeitpunkt erneut zu versuchen.";
+
+        String quoteText = "Wir freuen uns, Ihnen das beste verfügbare Angebot für Ihre Anfrage vorstellen zu können.";
+
         return "<html>" +
                 "<head>" +
                 "<style>" +
@@ -152,6 +155,8 @@ public class LoanBrokerService {
                 "<h1>Krömer Bank mal Anders</h1>" +
                 "</div>" +
                 "<div class='content'>" +
+                "<p>Sehr geehrte/r " + customerName + ",</p>" +
+                "<p>" + introText + "</p>" +
                 "<h2>Loan Request Details</h2>" +
                 "<table>" +
                 "<tr><th>Customer SSN</th><td>" + request.getCustomer().getSsn() + "</td></tr>" +
@@ -160,13 +165,16 @@ public class LoanBrokerService {
                 "<tr><th>UUID</th><td>" + uuid.toString() + "</td></tr>" +
                 "</table>" +
                 "<h2>Loan Quote Details</h2>" +
+                (quote.getLender() != null ? 
+                "<p>" + quoteText + "</p>" +
                 "<table>" +
-                "<tr><th>Lender</th><td>" + (quote.getLender() != null ? quote.getLender() : "N/A") + "</td></tr>" +
+                "<tr><th>Lender</th><td>" + quote.getLender() + "</td></tr>" +
                 "<tr><th>Interest Rate</th><td>" + quote.getRate() + "</td></tr>" +
                 "<tr><th>Quote Date</th><td>" + (quote.getQuoteDate() != null ? quote.getQuoteDate() : "N/A") + "</td></tr>" +
                 "<tr><th>Expiration Date</th><td>" + (quote.getExpirationDate() != null ? quote.getExpirationDate() : "N/A") + "</td></tr>" +
                 "<tr><th>Status</th><td>" + (quote.getStatus() != null ? quote.getStatus() : "N/A") + "</td></tr>" +
-                "</table>" +
+                "</table>" : 
+                "<p>" + noQuoteText + "</p>") +
                 "</div>" +
                 "<div class='footer'>" +
                 "© 2024 Krömer Bank mal Anders. All rights reserved." +
@@ -175,7 +183,7 @@ public class LoanBrokerService {
                 "</html>";
     }
 
-    private void sendEmail(String to, EmailContent content) throws UnsupportedEncodingException {
+    private void sendEmail(String to, EmailContent content) {
         final String username = "BAM1@jakob-kroemer.de";
         final String password = "4mpXpAWs3XJsTft8";
 
@@ -193,7 +201,12 @@ public class LoanBrokerService {
 
         try {
             Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(username, "Krömer Bank mal Anders"));
+            try {
+				message.setFrom(new InternetAddress(username, "Krömer Bank mal Anders"));
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
             message.setSubject(content.getSubject());
             message.setContent(content.getBody(), "text/html; charset=utf-8");
