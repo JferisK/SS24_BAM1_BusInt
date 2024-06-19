@@ -20,6 +20,7 @@ import javax.mail.internet.MimeMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import de.jakob_kroemer.domain.LoanRequest;
@@ -35,6 +36,9 @@ import de.jakob_kroemer.controller.BankResponseHandler;
 public class LoanBrokerService {
 
     @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    @Autowired
     private CreditBureauService creditBureauService;
 
     @Autowired
@@ -48,7 +52,6 @@ public class LoanBrokerService {
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     public ConfirmationMessage processLoanRequest(LoanRequest request) {
-        ConfirmationMessage confirmation = new ConfirmationMessage("Anfrage ist eingegangen. Sie werden per Mail spätestens in 10 Minuten benachrichtigt.");
 
         logger.info("2: LoanBrokerService Input{}", request.getCustomer().getSsn());
 
@@ -57,6 +60,18 @@ public class LoanBrokerService {
         float amount = request.getLoanAmount();
         int term = request.getTerm();
         UUID uuid = UUID.randomUUID();
+       
+        String uuidString = uuid.toString();
+        ConfirmationMessage confirmation = new ConfirmationMessage(
+            "Ihre Anfrage ist eingegangen. Sie werden spätestens in 10 Minuten per E-Mail benachrichtigt. " +
+            "Unter der folgenden UUID können Sie Ihre Informationen abrufen: " + uuidString + ". " +
+            "Verwenden Sie den folgenden API-Endpunkt, um Ihre Anfrage einzusehen: " +
+            "GET http://localhost:8080/loan/" + uuidString
+        );
+
+
+        // Save initial loan request to database
+        saveLoanRequest(uuid, ssn, customerName, amount, term);
 
         CreditScoreResponse creditScoreResponse = creditBureauService.getCreditScore(ssn, amount, term, uuid);
         int creditScore = creditScoreResponse.getScore();
@@ -70,7 +85,7 @@ public class LoanBrokerService {
         // Asynchronous processing to send email after aggregation
         CompletableFuture.runAsync(() -> {
             LoanQuote ret = new LoanQuote();
-            EmailContent emailContent = new EmailContent("Ihre Darlehensanfrage bei Krömer Bank mal Anders", "");
+            EmailContent emailContent = new EmailContent("Ihre Darlehensanfrage bei Krömer Broker mal Anders", "");
             try {
                 if (expectedResponses > 0) {
                     bankResponseHandler.setLatch(uuid, expectedResponses);
@@ -117,6 +132,9 @@ public class LoanBrokerService {
                 ret.setAmount(amount);
                 ret.setTerm(term);
 
+                // Update loan request in the database
+                updateLoanRequest(ret, uuid);
+
                 // Send email with the aggregation result
                 sendEmail(request.getCustomer().getEmail(), emailContent);
 
@@ -128,6 +146,22 @@ public class LoanBrokerService {
         });
 
         return confirmation;
+    }
+
+    private void saveLoanRequest(UUID uuid, String ssn, String customerName, float amount, int term) {
+        String sql = "INSERT INTO loan_requests (id, customer_ssn, customer_name, loan_amount, loan_term, status) VALUES (?, ?, ?, ?, ?, ?)";
+        jdbcTemplate.update(sql, uuid.toString(), ssn, customerName, amount, term, "Anfrage eingegangen");
+    }
+
+    private void updateLoanRequest(LoanQuote quote, UUID uuid) {
+        String sql = "UPDATE loan_requests SET lender = ?, interest_rate = ?, quote_date = ?, expiration_date = ?, status = ? WHERE id = ?";
+        jdbcTemplate.update(sql, 
+            quote.getLender(), 
+            quote.getRate(), 
+            quote.getQuoteDate(), 
+            quote.getExpirationDate(), 
+            quote.getStatus(), 
+            uuid.toString());
     }
 
     private String buildEmailBody(String customerName, LoanQuote quote, LoanRequest request, UUID uuid) {
@@ -152,7 +186,7 @@ public class LoanBrokerService {
                 "</head>" +
                 "<body>" +
                 "<div class='header'>" +
-                "<h1>Krömer Bank mal Anders</h1>" +
+                "<h1>Krömer Broker mal Anders</h1>" +
                 "</div>" +
                 "<div class='content'>" +
                 "<p>Sehr geehrte/r " + customerName + ",</p>" +
@@ -177,7 +211,7 @@ public class LoanBrokerService {
                 "<p>" + noQuoteText + "</p>") +
                 "</div>" +
                 "<div class='footer'>" +
-                "© 2024 Krömer Bank mal Anders. All rights reserved." +
+                "© 2024 Krömer Broker mal Anders. All rights reserved." +
                 "</div>" +
                 "</body>" +
                 "</html>";
@@ -202,7 +236,7 @@ public class LoanBrokerService {
         try {
             Message message = new MimeMessage(session);
             try {
-				message.setFrom(new InternetAddress(username, "Krömer Bank mal Anders"));
+				message.setFrom(new InternetAddress(username, "Krömer Broker mal Anders"));
 			} catch (UnsupportedEncodingException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

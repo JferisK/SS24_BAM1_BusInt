@@ -136,6 +136,11 @@
             <artifactId>mariadb-java-client</artifactId>
             <version>${mariadb.version}</version>
         </dependency>
+        <dependency>
+        	<groupId>de.jakob_kroemer</groupId>
+        	<artifactId>creditbureau</artifactId>
+        	<version>0.0.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
     <repositories>
