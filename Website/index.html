@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan Application</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Loan Application Form</h1>
+        <form id="loan-form">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="firstName">First Name</label>
+                    <input type="text" id="firstName" name="firstName" required>
+                </div>
+                <div class="form-group">
+                    <label for="lastName">Last Name</label>
+                    <input type="text" id="lastName" name="lastName" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="ssn">SSN</label>
+                    <input type="number" id="ssn" name="ssn" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="street">Street</label>
+                    <input type="text" id="street" name="street" required>
+                </div>
+                <div class="form-group">
+                    <label for="city">City</label>
+                    <input type="text" id="city" name="city" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="postalCode">Postal Code</label>
+                    <input type="text" id="postalCode" name="postalCode" required>
+                </div>
+                <div class="form-group">
+                    <label for="country">Country</label>
+                    <input type="text" id="country" name="country" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="loanAmount">Loan Amount</label>
+                    <input type="number" id="loanAmount" name="loanAmount" required>
+                </div>
+                <div class="form-group">
+                    <label for="term">Term (months)</label>
+                    <input type="number" id="term" name="term" required>
+                </div>
+            </div>
+            <button type="submit">Apply</button>
+        </form>
+        <div id="response" class="response-container" style="display: none;"></div>
+        <div id="error" class="error-container" style="display: none;"></div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
