@@ -4,23 +4,21 @@ import java.io.Serializable;
 
 public class BankRequest implements Serializable {
     private static final long serialVersionUID = 7641759662339279397L;
+
     private String uuid;
     private int term;
     private float amount;
     private int score;
     private String ssn;
-    
-    // Standardkonstruktor
-    // JUNGE ICH BIN EIN HURENSOHN! ICH BRAUCHE EIN LEEREN KONSTRUKTOR, DAMIT ICH ÜBERHAUTP WAS MACHE!
-    public BankRequest() {
-    }
-    
+
+    public BankRequest() {}
+
     public BankRequest(String uuid, int term, float amount, int score, String ssn) {
-        this.uuid = uuid;
-        this.term = term;
+        this.uuid   = uuid;
+        this.term   = term;
         this.amount = amount;
-        this.score = score;
-        this.ssn = ssn;
+        this.score  = score;
+        this.ssn    = ssn;
     }
 
     public String getUuid() {
@@ -61,5 +59,16 @@ public class BankRequest implements Serializable {
 
     public void setSsn(String ssn) {
         this.ssn = ssn;
+    }
+
+    @Override
+    public String toString() {
+        return "BankRequest{" +
+                "uuid='" + uuid + '\'' +
+                ", term=" + term +
+                ", amount=" + amount +
+                ", score=" + score +
+                ", ssn='" + ssn + '\'' +
+                '}';
     }
 }
