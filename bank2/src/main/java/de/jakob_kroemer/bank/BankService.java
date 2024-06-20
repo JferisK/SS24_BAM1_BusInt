@@ -11,6 +11,7 @@ import de.jakob_kroemer.domain.BankRequest;
 import de.jakob_kroemer.domain.BankResponse;
 
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class BankService {
@@ -28,6 +29,9 @@ public class BankService {
     private static final int MIN_TERM = 12;
     private static final int MAX_TERM = 48;
 
+    private static final int MIN_DELAY_MINUTES = 1;
+    private static final int MAX_DELAY_MINUTES = 10;
+
     @JmsListener(destination = "commerzbankChannel")
     public void receiveMessage(BankRequest bankRequest) {
         logger.info("Received bank request with SSN: {} & UUID: {}", bankRequest.getSsn(), bankRequest.getUuid());
@@ -37,9 +41,9 @@ public class BankService {
             bankRequest.getTerm() >= MIN_TERM && bankRequest.getTerm() <= MAX_TERM) {
 
             float interestRate = random.nextFloat() * 10;
-            int delay = (int) (Math.sqrt(random.nextDouble()) * 5);
+            int delayMinutes = MIN_DELAY_MINUTES + random.nextInt(MAX_DELAY_MINUTES - MIN_DELAY_MINUTES + 1);
             try {
-                Thread.sleep(delay * 1000);
+                TimeUnit.MINUTES.sleep(delayMinutes);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
