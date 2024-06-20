@@ -1,13 +1,11 @@
 package de.jakob_kroemer.creditbureau;
 
-import java.util.UUID;
-
 public class CreditScoreResponse {
     private String uuid;
     private int score;
 
     public CreditScoreResponse(String uuid, int score) {
-        this.uuid = uuid;
+        this.uuid  = uuid;
         this.score = score;
     }
 
@@ -25,5 +23,13 @@ public class CreditScoreResponse {
 
     public void setScore(int score) {
         this.score = score;
+    }
+
+    @Override
+    public String toString() {
+        return "CreditScoreResponse{" +
+                "uuid='" + uuid + '\'' +
+                ", score=" + score +
+                '}';
     }
 }

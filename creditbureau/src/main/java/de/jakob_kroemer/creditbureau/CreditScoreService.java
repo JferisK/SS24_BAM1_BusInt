@@ -3,9 +3,7 @@ package de.jakob_kroemer.creditbureau;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
-import java.util.concurrent.ThreadLocalRandom;
 import java.sql.Timestamp;
-import java.util.UUID;
 
 @Service
 public class CreditScoreService {
