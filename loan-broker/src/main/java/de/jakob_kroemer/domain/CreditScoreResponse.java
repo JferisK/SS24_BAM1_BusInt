@@ -1,24 +1,28 @@
 package de.jakob_kroemer.domain;
 
+import java.util.UUID;
+
 public class CreditScoreResponse {
 
-    private String agency;
+	private UUID uuid;
     private int score;
 
-    public CreditScoreResponse(String agency, int score) {
-        this.agency 	= agency;
-        this.score 		= score;
+    public CreditScoreResponse() {}
+    
+    public CreditScoreResponse(UUID uuid, int score) {
+        this.uuid 	= uuid;
+        this.score 	= score;
     }
 
-    public String getAgency() {
-        return agency;
-    }
+    public UUID getUuid() {
+		return uuid;
+	}
 
-    public void setAgency(String agency) {
-        this.agency = agency;
-    }
+	public void setUuid(UUID uuid) {
+		this.uuid = uuid;
+	}
 
-    public int getScore() {
+	public int getScore() {
         return score;
     }
 
@@ -29,7 +33,7 @@ public class CreditScoreResponse {
     @Override
     public String toString() {
         return "CreditScoreResponse{" +
-                "agency='" + agency + '\'' +
+                "UUID='" + uuid + '\'' +
                 ", score=" + score +
                 '}';
     }
