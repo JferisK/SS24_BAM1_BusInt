@@ -1,23 +1,21 @@
 package de.jakob_kroemer.domain;
 
 public class Customer {
+
     private String firstName;
     private String lastName;
-    private Address address;
     private String ssn;
     private String email;
+    private Address address;
 
-	// Konstruktoren
-    public Customer() {}
-
-    public Customer(String firstName, String lastName, Address address, String email) {
+    public Customer(String firstName, String lastName, String ssn, String email, Address address) {
         this.firstName = firstName;
-        this.lastName = lastName;
-        this.address = address;
-        this.email = email;
+        this.lastName  = lastName;
+        this.ssn       = ssn;
+        this.email     = email;
+        this.address   = address;
     }
 
-    // Getter und Setter
     public String getFirstName() {
         return firstName;
     }
@@ -34,6 +32,22 @@ public class Customer {
         this.lastName = lastName;
     }
 
+    public String getSsn() {
+        return ssn;
+    }
+
+    public void setSsn(String ssn) {
+        this.ssn = ssn;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public Address getAddress() {
         return address;
     }
@@ -42,20 +56,14 @@ public class Customer {
         this.address = address;
     }
 
-    public String getSsn() {
-		return ssn;
-	}
-
-	public void setSsn(String ssn) {
-		this.ssn = ssn;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-	
+    @Override
+    public String toString() {
+        return "Customer{" +
+                "firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", ssn='" + ssn + '\'' +
+                ", email='" + email + '\'' +
+                ", address=" + address +
+                '}';
+    }
 }

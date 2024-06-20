@@ -6,17 +6,15 @@ public class LoanRequest {
     private int term;  // in months
     private int creditScore;
 
-    // Konstruktoren
     public LoanRequest() {}
 
     public LoanRequest(Customer customer, float loanAmount, int term, int creditScore) {
-        this.customer = customer;
-        this.loanAmount = loanAmount;
-        this.term = term;
+        this.customer    = customer;
+        this.loanAmount  = loanAmount;
+        this.term        = term;
         this.creditScore = creditScore;
     }
 
-    // Getter und Setter
     public Customer getCustomer() {
         return customer;
     }
@@ -48,5 +46,14 @@ public class LoanRequest {
     public void setCreditScore(int creditScore) {
         this.creditScore = creditScore;
     }
-    
+
+    @Override
+    public String toString() {
+        return "LoanRequest{" +
+                "customer=" + customer +
+                ", loanAmount=" + loanAmount +
+                ", term=" + term +
+                ", creditScore=" + creditScore +
+                '}';
+    }
 }

@@ -8,77 +8,85 @@ public class BankConfiguration {
     private float maxLoanAmount;
     private int minTerm;
     private int maxTerm;
-    
-    // Default-Konstruktor
-    public BankConfiguration() {
+
+    public BankConfiguration() {}
+
+    public BankConfiguration(String bankName, String bankChannel, float minCreditScore, float minLoanAmount, float maxLoanAmount, int minTerm, int maxTerm) {
+        this.bankName       = bankName;
+        this.bankChannel    = bankChannel;
+        this.minCreditScore = minCreditScore;
+        this.minLoanAmount  = minLoanAmount;
+        this.maxLoanAmount  = maxLoanAmount;
+        this.minTerm        = minTerm;
+        this.maxTerm        = maxTerm;
     }
-    
-	public BankConfiguration(String bankName, String bankChannel, float minCreditScore, float minLoanAmount, float maxLoanAmount, int minTerm, int maxTerm) {
-		super();
-		this.bankName = bankName;
-		this.bankChannel = bankChannel;
-		this.minCreditScore = minCreditScore;
-		this.minLoanAmount = minLoanAmount;
-		this.maxLoanAmount = maxLoanAmount;
-		this.minTerm = minTerm;
-		this.maxTerm = maxTerm;
-	}
 
-	public String getBankName() {
-		return bankName;
-	}
+    public String getBankName() {
+        return bankName;
+    }
 
-	public void setBankName(String bankName) {
-		this.bankName = bankName;
-	}
+    public void setBankName(String bankName) {
+        this.bankName = bankName;
+    }
 
-	public String getBankChannel() {
-		return bankChannel;
-	}
+    public String getBankChannel() {
+        return bankChannel;
+    }
 
-	public void setBankChannel(String bankChannel) {
-		this.bankChannel = bankChannel;
-	}
+    public void setBankChannel(String bankChannel) {
+        this.bankChannel = bankChannel;
+    }
 
-	public float getMinCreditScore() {
-		return minCreditScore;
-	}
+    public float getMinCreditScore() {
+        return minCreditScore;
+    }
 
-	public void setMinCreditScore(float minCreditScore) {
-		this.minCreditScore = minCreditScore;
-	}
+    public void setMinCreditScore(float minCreditScore) {
+        this.minCreditScore = minCreditScore;
+    }
 
-	public float getMinLoanAmount() {
-		return minLoanAmount;
-	}
+    public float getMinLoanAmount() {
+        return minLoanAmount;
+    }
 
-	public void setMinLoanAmount(float minLoanAmount) {
-		this.minLoanAmount = minLoanAmount;
-	}
+    public void setMinLoanAmount(float minLoanAmount) {
+        this.minLoanAmount = minLoanAmount;
+    }
 
-	public float getMaxLoanAmount() {
-		return maxLoanAmount;
-	}
+    public float getMaxLoanAmount() {
+        return maxLoanAmount;
+    }
 
-	public void setMaxLoanAmount(float maxLoanAmount) {
-		this.maxLoanAmount = maxLoanAmount;
-	}
+    public void setMaxLoanAmount(float maxLoanAmount) {
+        this.maxLoanAmount = maxLoanAmount;
+    }
 
-	public int getMinTerm() {
-		return minTerm;
-	}
+    public int getMinTerm() {
+        return minTerm;
+    }
 
-	public void setMinTerm(int minTerm) {
-		this.minTerm = minTerm;
-	}
+    public void setMinTerm(int minTerm) {
+        this.minTerm = minTerm;
+    }
 
-	public int getMaxTerm() {
-		return maxTerm;
-	}
+    public int getMaxTerm() {
+        return maxTerm;
+    }
 
-	public void setMaxTerm(int maxTerm) {
-		this.maxTerm = maxTerm;
-	}
+    public void setMaxTerm(int maxTerm) {
+        this.maxTerm = maxTerm;
+    }
 
-    
+    @Override
+    public String toString() {
+        return "BankConfiguration{" +
+                "bankName='" + bankName + '\'' +
+                ", bankChannel='" + bankChannel + '\'' +
+                ", minCreditScore=" + minCreditScore +
+                ", minLoanAmount=" + minLoanAmount +
+                ", maxLoanAmount=" + maxLoanAmount +
+                ", minTerm=" + minTerm +
+                ", maxTerm=" + maxTerm +
+                '}';
+    }
 }

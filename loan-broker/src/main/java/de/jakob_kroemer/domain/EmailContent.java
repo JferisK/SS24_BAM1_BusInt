@@ -6,7 +6,7 @@ public class EmailContent {
 
     public EmailContent(String subject, String body) {
         this.subject = subject;
-        this.body = body;
+        this.body    = body;
     }
 
     public String getSubject() {
@@ -23,5 +23,13 @@ public class EmailContent {
 
     public void setBody(String body) {
         this.body = body;
+    }
+
+    @Override
+    public String toString() {
+        return "EmailContent{" +
+                "subject='" + subject + '\'' +
+                ", body='" + body + '\'' +
+                '}';
     }
 }

@@ -18,28 +18,22 @@ import de.jakob_kroemer.domain.LoanQuote;
 import de.jakob_kroemer.service.LoanBrokerService;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-/**
- * Controller to handle loan requests and interactions via REST API.
- */
 @RestController
 public class LoanBrokerController {
 
-    @Autowired
-    private LoanBrokerService loanBrokerService;
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-
+    private final LoanBrokerService loanBrokerService;
+    private final JdbcTemplate jdbcTemplate;
     private static final Logger logger = LoggerFactory.getLogger(LoanBrokerController.class);
 
-    /**
-     * Endpoint to submit a loan request.
-     * @param loanRequest The loan request details.
-     * @return The loan quote with calculated interest rate and terms.
-     */
+    @Autowired
+    public LoanBrokerController(LoanBrokerService loanBrokerService, JdbcTemplate jdbcTemplate) {
+        this.loanBrokerService = loanBrokerService;
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
     @PostMapping("/loan")
     public ConfirmationMessage submitLoanRequest(@RequestBody LoanRequest loanRequest) {
-        logger.info("1: LoanBrokerController Request {}", loanRequest.toString()); // Using info level for demonstration
+        logger.info("Received loan request: {}", loanRequest);
         return loanBrokerService.processLoanRequest(loanRequest);
     }
 

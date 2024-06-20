@@ -6,17 +6,15 @@ public class Address {
     private String postalCode;
     private String country;
 
-    // Konstruktoren
     public Address() {}
 
     public Address(String street, String city, String postalCode, String country) {
-        this.street = street;
-        this.city = city;
+        this.street     = street;
+        this.city       = city;
         this.postalCode = postalCode;
-        this.country = country;
+        this.country    = country;
     }
 
-    // Getter und Setter
     public String getStreet() {
         return street;
     }
@@ -47,5 +45,15 @@ public class Address {
 
     public void setCountry(String country) {
         this.country = country;
+    }
+
+    @Override
+    public String toString() {
+        return "Address{" +
+                "street='" + street + '\'' +
+                ", city='" + city + '\'' +
+                ", postalCode='" + postalCode + '\'' +
+                ", country='" + country + '\'' +
+                '}';
     }
 }

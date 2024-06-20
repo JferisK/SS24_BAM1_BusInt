@@ -5,10 +5,7 @@ import java.util.Date;
 import java.util.Properties;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.PasswordAuthentication;
@@ -16,13 +13,11 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
-
 import de.jakob_kroemer.domain.LoanRequest;
 import de.jakob_kroemer.domain.BankResponse;
 import de.jakob_kroemer.domain.ConfirmationMessage;
@@ -49,18 +44,15 @@ public class LoanBrokerService {
 
     private static final Logger logger = LoggerFactory.getLogger(LoanBrokerService.class);
 
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-
     public ConfirmationMessage processLoanRequest(LoanRequest request) {
-
-        logger.info("2: LoanBrokerService Input{}", request.getCustomer().getSsn());
+        logger.info("Input{}", request.getCustomer().getSsn());
 
         String ssn = request.getCustomer().getSsn();
         String customerName = request.getCustomer().getFirstName() + " " + request.getCustomer().getLastName();
         float amount = request.getLoanAmount();
         int term = request.getTerm();
         UUID uuid = UUID.randomUUID();
-       
+
         String uuidString = uuid.toString();
         ConfirmationMessage confirmation = new ConfirmationMessage(
             "Ihre Anfrage ist eingegangen. Sie werden spätestens in 10 Minuten per E-Mail benachrichtigt. " +
@@ -69,27 +61,21 @@ public class LoanBrokerService {
             "GET http://localhost:8080/loan/" + uuidString
         );
 
-
-        // Save initial loan request to database
         saveLoanRequest(uuid, ssn, customerName, amount, term);
 
         CreditScoreResponse creditScoreResponse = creditBureauService.getCreditScore(ssn, amount, term, uuid);
         int creditScore = creditScoreResponse.getScore();
-        logger.info("6: LoanBrokerService score {}", creditScore);
+        logger.info("Score {}", creditScore);
 
         int expectedResponses = bankCommunicationService.sendLoanDetailsToBank(request, creditScore, uuid);
-
-        // Send confirmation message immediately
         logger.info(confirmation.getMessage());
 
-        // Asynchronous processing to send email after aggregation
         CompletableFuture.runAsync(() -> {
             LoanQuote ret = new LoanQuote();
             EmailContent emailContent = new EmailContent("Ihre Darlehensanfrage bei Krömer Broker mal Anders", "");
             try {
                 if (expectedResponses > 0) {
                     bankResponseHandler.setLatch(uuid, expectedResponses);
-
                     try {
                         bankResponseHandler.awaitLatch(uuid, 15, TimeUnit.SECONDS);
                     } catch (InterruptedException e) {
@@ -132,10 +118,7 @@ public class LoanBrokerService {
                 ret.setAmount(amount);
                 ret.setTerm(term);
 
-                // Update loan request in the database
                 updateLoanRequest(ret, uuid);
-
-                // Send email with the aggregation result
                 sendEmail(request.getCustomer().getEmail(), emailContent);
 
             } catch (Exception e) {
@@ -155,13 +138,7 @@ public class LoanBrokerService {
 
     private void updateLoanRequest(LoanQuote quote, UUID uuid) {
         String sql = "UPDATE loan_requests SET lender = ?, interest_rate = ?, quote_date = ?, expiration_date = ?, status = ? WHERE id = ?";
-        jdbcTemplate.update(sql, 
-            quote.getLender(), 
-            quote.getRate(), 
-            quote.getQuoteDate(), 
-            quote.getExpirationDate(), 
-            quote.getStatus(), 
-            uuid.toString());
+        jdbcTemplate.update(sql, quote.getLender(), quote.getRate(), quote.getQuoteDate(), quote.getExpirationDate(), quote.getStatus(), uuid.toString());
     }
 
     private String buildEmailBody(String customerName, LoanQuote quote, LoanRequest request, UUID uuid) {

@@ -1,43 +1,38 @@
-/*
- * Copyright 2002-2010 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package de.jakob_kroemer.domain;
 
-/**
- * @author Oleg Zhurakousky
- */
+import java.util.List;
+
 public class CreditReport {
 
-	private final int score;
-	private volatile String history;
+    private String customerId;
+    private List<CreditScoreResponse> creditScores;
 
-	public CreditReport(int score) {
-		this.score = score;
-	}
+    public CreditReport(String customerId, List<CreditScoreResponse> creditScores) {
+        this.customerId 	= customerId;
+        this.creditScores 	= creditScores;
+    }
 
-	public int getScore() {
-		return this.score;
-	}
+    public String getCustomerId() {
+        return customerId;
+    }
 
-	public void setHistory(String history) {
-		this.history = history;
-	}
+    public void setCustomerId(String customerId) {
+        this.customerId = customerId;
+    }
 
-	public String getHistory() {
-		return this.history;
-	}
+    public List<CreditScoreResponse> getCreditScores() {
+        return creditScores;
+    }
 
+    public void setCreditScores(List<CreditScoreResponse> creditScores) {
+        this.creditScores = creditScores;
+    }
+
+    @Override
+    public String toString() {
+        return "CreditReport{" +
+                "customerId='" + customerId + '\'' +
+                ", creditScores=" + creditScores +
+                '}';
+    }
 }
