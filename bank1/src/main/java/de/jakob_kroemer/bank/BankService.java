@@ -29,8 +29,8 @@ public class BankService {
     private static final int MIN_TERM = 12;
     private static final int MAX_TERM = 60;
 
-    private static final int MIN_DELAY_MINUTES = 5;
-    private static final int MAX_DELAY_MINUTES = 15;
+    private static final int MIN_DELAY_MINUTES = 0;
+    private static final int MAX_DELAY_MINUTES = 4;
 
     @JmsListener(destination = "deutscheBankChannel")
     public void receiveMessage(BankRequest bankRequest) {

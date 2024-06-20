@@ -42,10 +42,11 @@ public class BankResponseHandler {
         latchMap.put(uuid, new CountDownLatch(count));
     }
 
-    public void awaitLatch(UUID uuid, long timeout, TimeUnit unit) throws InterruptedException {
+    public boolean awaitLatch(UUID uuid, long timeout, TimeUnit unit) throws InterruptedException {
         CountDownLatch latch = latchMap.get(uuid);
         if (latch != null) {
-            latch.await(timeout, unit);
+            return latch.await(timeout, unit);
         }
+        return false;
     }
 }

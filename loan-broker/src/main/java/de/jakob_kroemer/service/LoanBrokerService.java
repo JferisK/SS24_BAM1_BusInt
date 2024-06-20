@@ -43,6 +43,7 @@ public class LoanBrokerService {
     private BankResponseHandler bankResponseHandler;
 
     private static final Logger logger = LoggerFactory.getLogger(LoanBrokerService.class);
+    private static final int AGGREGATION_WAIT_TIME_MINUTES = 60;
 
     public ConfirmationMessage processLoanRequest(LoanRequest request) {
         logger.info("Input{}", request.getCustomer().getSsn());
@@ -55,7 +56,7 @@ public class LoanBrokerService {
 
         String uuidString = uuid.toString();
         ConfirmationMessage confirmation = new ConfirmationMessage(
-            "Ihre Anfrage ist eingegangen. Sie werden spätestens in 10 Minuten per E-Mail benachrichtigt. " +
+            "Ihre Anfrage ist eingegangen. Sie werden spätestens in " + AGGREGATION_WAIT_TIME_MINUTES + " Minuten per E-Mail benachrichtigt. " +
             "Unter der folgenden UUID können Sie Ihre Informationen abrufen: " + uuidString + ". " +
             "Verwenden Sie den folgenden API-Endpunkt, um Ihre Anfrage einzusehen: " +
             "GET http://localhost:8080/loan/" + uuidString
@@ -77,49 +78,60 @@ public class LoanBrokerService {
                 if (expectedResponses > 0) {
                     bankResponseHandler.setLatch(uuid, expectedResponses);
                     try {
-                        bankResponseHandler.awaitLatch(uuid, 15, TimeUnit.SECONDS);
+                        logger.info("Waiting for aggregation results for UUID: {}", uuid);
+                        boolean completed = bankResponseHandler.awaitLatch(uuid, AGGREGATION_WAIT_TIME_MINUTES, TimeUnit.MINUTES);
+                        if (!completed) {
+                            logger.warn("Aggregation wait time elapsed for UUID: {}", uuid);
+                        }
+
+                        AggregationResult result = bankResponseHandler.getAggregationResult(uuid);
+                        if (result != null) {
+                            BankResponse bestQuote = result.getBestQuote();
+                            if (bestQuote != null) {
+                                ret.setRate(bestQuote.getInterestRate());
+                                ret.setLender(bestQuote.getBankName());
+                                ret.setQuoteDate(new Date());
+                                ret.setExpirationDate(new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(30)));
+                                logger.info("Best quote received from {} with rate {}", bestQuote.getBankName(), bestQuote.getInterestRate());
+                                ret.setStatus("Best offer found");
+                                emailContent.setBody(buildEmailBody(customerName, ret, request, uuid));
+                            } else {
+                                String message = "No quotes received for request with UUID: " + uuid;
+                                logger.warn(message);
+                                ret.setStatus(message);
+                                emailContent.setBody(buildEmailBody(customerName, ret, request, uuid) + "<br><br>" + message);
+                            }
+                        } else {
+                            String message = "No aggregation result found for UUID: " + uuid;
+                            logger.warn(message);
+                            ret.setStatus(message);
+                            emailContent.setBody(buildEmailBody(customerName, ret, request, uuid) + "<br><br>" + message);
+                        }
                     } catch (InterruptedException e) {
                         logger.error("Error waiting for aggregation result", e);
                         ret.setStatus("Error waiting for aggregation result: " + e.getMessage());
                         Thread.currentThread().interrupt();
                     }
 
-                    AggregationResult result = bankResponseHandler.getAggregationResult(uuid);
-                    if (result != null) {
-                        BankResponse bestQuote = result.getBestQuote();
-                        if (bestQuote != null) {
-                            ret.setRate(bestQuote.getInterestRate());
-                            ret.setLender(bestQuote.getBankName());
-                            ret.setQuoteDate(new Date());
-                            ret.setExpirationDate(new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(30)));
-                            logger.info("Best quote received from {} with rate {}", bestQuote.getBankName(), bestQuote.getInterestRate());
-                            ret.setStatus("Best offer found");
-                            emailContent.setBody(buildEmailBody(customerName, ret, request, uuid));
-                        } else {
-                            String message = "No quotes received for request with UUID: " + uuid;
-                            logger.warn(message);
-                            ret.setStatus(message);
-                            emailContent.setBody(buildEmailBody(customerName, ret, request, uuid) + "<br><br>" + message);
-                        }
-                    } else {
-                        String message = "No aggregation result found for UUID: " + uuid;
-                        logger.warn(message);
-                        ret.setStatus(message);
-                        emailContent.setBody(buildEmailBody(customerName, ret, request, uuid) + "<br><br>" + message);
-                    }
+                    ret.setUuid(uuid);
+                    ret.setAmount(amount);
+                    ret.setTerm(term);
+
+                    updateLoanRequest(ret, uuid);
+                    sendEmail(request.getCustomer().getEmail(), emailContent);
                 } else {
                     String message = "No banks matched criteria, no requests sent.";
                     logger.warn(message);
                     ret.setStatus(message);
                     emailContent.setBody(buildEmailBody(customerName, ret, request, uuid) + "<br><br>" + message);
+
+                    ret.setUuid(uuid);
+                    ret.setAmount(amount);
+                    ret.setTerm(term);
+
+                    updateLoanRequest(ret, uuid);
+                    sendEmail(request.getCustomer().getEmail(), emailContent);
                 }
-
-                ret.setUuid(uuid);
-                ret.setAmount(amount);
-                ret.setTerm(term);
-
-                updateLoanRequest(ret, uuid);
-                sendEmail(request.getCustomer().getEmail(), emailContent);
 
             } catch (Exception e) {
                 logger.error("Exception during processing loan request", e);
@@ -213,11 +225,10 @@ public class LoanBrokerService {
         try {
             Message message = new MimeMessage(session);
             try {
-				message.setFrom(new InternetAddress(username, "Krömer Broker mal Anders"));
-			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+                message.setFrom(new InternetAddress(username, "Krömer Broker mal Anders"));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
             message.setSubject(content.getSubject());
             message.setContent(content.getBody(), "text/html; charset=utf-8");

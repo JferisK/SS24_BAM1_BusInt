@@ -30,7 +30,7 @@ public class BankService {
     private static final int MAX_TERM = 48;
 
     private static final int MIN_DELAY_MINUTES = 1;
-    private static final int MAX_DELAY_MINUTES = 10;
+    private static final int MAX_DELAY_MINUTES = 2;
 
     @JmsListener(destination = "commerzbankChannel")
     public void receiveMessage(BankRequest bankRequest) {
