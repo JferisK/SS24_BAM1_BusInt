@@ -1,0 +1,49 @@
+version: '3.8'
+services:
+  activemq:
+    image: ${{ secrets.DOCKER_USERNAME }}/activemq:latest
+    ports:
+      - "8161:8161"
+      - "61616:61616"
+
+  bank1:
+    image: ${{ secrets.DOCKER_USERNAME }}/bank1:latest
+    depends_on:
+      - activemq
+    ports:
+      - "8081:8080"
+
+  bank2:
+    image: ${{ secrets.DOCKER_USERNAME }}/bank2:latest
+    depends_on:
+      - activemq
+    ports:
+      - "8082:8080"
+
+  bank3:
+    image: ${{ secrets.DOCKER_USERNAME }}/bank3:latest
+    depends_on:
+      - activemq
+    ports:
+      - "8083:8080"
+
+  bank4:
+    image: ${{ secrets.DOCKER_USERNAME }}/bank4:latest
+    depends_on:
+      - activemq
+    ports:
+      - "8084:8080"
+
+  creditbureau:
+    image: ${{ secrets.DOCKER_USERNAME }}/creditbureau:latest
+    depends_on:
+      - activemq
+    ports:
+      - "8085:8080"
+
+  loanbroker:
+    image: ${{ secrets.DOCKER_USERNAME }}/loanbroker:latest
+    depends_on:
+      - activemq
+    ports:
+      - "8086:8080"
