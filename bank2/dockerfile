@@ -1,0 +1,26 @@
+# Verwenden eines Basis-Images mit Java-Unterstützung und Maven
+FROM openjdk:11-jre-slim
+
+# Installieren von Maven
+RUN apt-get update && \
+    apt-get install -y maven && \
+    apt-get clean
+
+# Setzen des Arbeitsverzeichnisses im Container
+WORKDIR /app
+
+# Kopieren der pom.xml und Herunterladen der Abhängigkeiten
+COPY pom.xml .
+RUN mvn dependency:go-offline -B
+
+# Kopieren des gesamten Quellcodes in das Arbeitsverzeichnis
+COPY src ./src
+
+# Bauen des Projekts
+RUN mvn package -DskipTests
+
+# Exponieren der Ports
+EXPOSE 8080
+
+# Startbefehl für die Anwendung
+CMD ["java", "-jar", "target/bank2-1.0-SNAPSHOT.jar"]
